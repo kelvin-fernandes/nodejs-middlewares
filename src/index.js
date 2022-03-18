@@ -24,7 +24,15 @@ function checksExistsUserAccount(request, response, next) {
 }
 
 function checksCreateTodosUserAvailability(request, response, next) {
-  // Complete aqui
+  const { user } = request;
+
+  const todosCount = user.todos.length;
+
+  if(!user.pro && todosCount === 10) {
+    return response.status(403).json({error: "Please, upgrade your account. You reached the limit of 10 todos in your free plan!"});
+  }
+
+  return next();
 }
 
 function checksTodoExists(request, response, next) {
