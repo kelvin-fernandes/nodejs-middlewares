@@ -61,7 +61,17 @@ function checksTodoExists(request, response, next) {
 }
 
 function findUserById(request, response, next) {
-  // Complete aqui
+  const { id } = request.params;
+
+  const user = users.find((lambdaUser) => lambdaUser.id === id);
+
+  if(!user) {
+    return response.status(404).json({error: "User doesn't exists!"});
+  }
+
+  request.user = user;
+
+  return next();
 }
 
 function findUserByUsername(username) {
