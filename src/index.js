@@ -12,7 +12,7 @@ const users = [];
 function checksExistsUserAccount(request, response, next) {
   const { username } = request.headers;
 
-  const user = users.find((lambdaUser) => lambdaUser.username === username);
+  const user = findUserByUsername(username);
 
   if(!user) {
     return response.status(404).json({error: "Username doesn't exists!"});
@@ -36,11 +36,36 @@ function checksCreateTodosUserAvailability(request, response, next) {
 }
 
 function checksTodoExists(request, response, next) {
-  // Complete aqui
+  const { username } = request.headers;
+  const { id } = request.params;
+
+  const user = findUserByUsername(username);
+
+  if(!user) {
+    return response.status(404).json({error: "Username doesn't exists!"});
+  }
+
+  const idIsValid = validate(id);
+  const todo = user.todos.find((lambdaTodo) => lambdaTodo.id === id);
+
+  if(!idIsValid) {
+    return response.status(400).json({error: "Id is not valid!"});
+  } else if(!todo) {
+    return response.status(404).json({error: "Todo item doesn't exists!"});
+  }
+
+  request.user = user;
+  request.todo = todo;
+
+  return next();
 }
 
 function findUserById(request, response, next) {
   // Complete aqui
+}
+
+function findUserByUsername(username) {
+  return users.find((lambdaUser) => lambdaUser.username === username);
 }
 
 app.post('/users', (request, response) => {
